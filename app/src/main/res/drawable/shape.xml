@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval" >
+    <!-- 圓形內部的填充顏色 -->
+    <solid android:color="#98E2C6"></solid>
+    <!-- 環狀外部寬度的顏色 -->
+    <stroke android:width="5dp" android:color="#FFE1A8"></stroke>
+</shape>

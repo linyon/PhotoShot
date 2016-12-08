@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_choose_mode"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:transitionGroup="false"
+    android:nestedScrollingEnabled="false"
+
+    android:gravity="center_vertical|center_horizontal">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="330dp"
+        android:layout_height="500dp"
+        android:background="#ffffffff">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_margin="0dp"
+            android:focusable="true"
+            android:background="#FF8552">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/text_title"
+                android:text="選擇效果"
+                android:minHeight="50dp"
+                android:padding="10dp"
+                android:textColor="@android:color/white"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="2dp" />
+            <Button
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="110dp"
+                android:background="@drawable/mybutton"
+                android:layout_alignParentRight="true"/>
+
+            <Button
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10.0dip"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/mybutton"
+                android:layout_toStartOf="@+id/button" />
+        </LinearLayout>
+        <GridView
+            android:listSelector="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recycler_view"
+            android:numColumns="1"
+            android:gravity="center" />
+    </LinearLayout>
+
+</LinearLayout>

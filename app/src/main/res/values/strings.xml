@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">PhotoShot</string>
+    <string name="Choose_Mode">選擇模式</string>
+    <string-array name="Mode">
+        <item>懷舊效果</item>
+        <item>模糊效果</item>
+        <item>灰階效果</item>
+        <item>底片效果</item>
+        <item>草圖效果</item>
+        <item>黑白效果</item>
+        <item>取消效果</item>
+    </string-array>
+</resources>
