@@ -70,7 +70,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="28517dd1c085139fe31b89cbbc270d9cf3a9e630">
+        sha1="1cd8cd50c7e93fa7a993faf082dcb1ecf95c9a33">
         <dex dex="D:\Work\Android\PhotoShot\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_5c00ed6d42cb6949ccabab1e9ebfe874b69e6b74\classes.dex" />
     </item>
     <item
@@ -97,7 +97,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="df7196be9bae7d50501c5466069221f26f528257">
+        sha1="238c9bdf05251bb0f969d5ebc50636a344f304ae">
         <dex dex="D:\Work\Android\PhotoShot\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_918028c9c857a004fc2852387563772fdcc6f818\classes.dex" />
     </item>
     <item

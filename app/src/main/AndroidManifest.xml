@@ -26,11 +26,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".PhotoEdit" />
-        <activity android:name=".PhotoAbout" />
+        <activity android:name=".PhotoAbout"
+            android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".AboutUs" />
         <activity android:name=".ChooseMode"
             android:theme="@android:style/Theme.Dialog"
-            ></activity>
+            />
     </application>
 
 </manifest>

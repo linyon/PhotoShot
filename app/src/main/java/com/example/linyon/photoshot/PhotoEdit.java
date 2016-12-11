@@ -21,12 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static com.example.linyon.photoshot.PhotoMode.getimage;
 
 public class PhotoEdit extends Activity implements View.OnClickListener {
 
@@ -37,7 +38,7 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
     private ImageButton btn_save;
     private int CHOOSE_MODE = 4;
     public static final String FILE_NAME = "file_name";
-    public static final String FILE_ID = "file_id";
+    public static final String FILE_MODE = "file_mode";
     public static final String FILE_PATH = "file_path";
     public static final String FILE_H = "file_h";
     public static final String FILE_W = "file_w";
@@ -46,9 +47,10 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
     public static final String IMAGE_IS_EDIT = "image_is_edit";
     public String filePath,fileName,fileH,fileW;// 需要编辑图片路径
     public String saveFilePath;// 生成的新图片路径
-    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1,mode = 6;
     Bitmap bm,bm_1;
     public int it=6;
+    public boolean checked = false;
     private int[] imgIds = {R.mipmap.oldremember,
             R.mipmap.blur, R.mipmap.graylevel,R.mipmap.dipan
             ,R.mipmap.sketch,R.mipmap.blackwhite,R.mipmap.photo_about_72x72};
@@ -61,11 +63,11 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
         btn_choosemode = (ImageButton) findViewById(R.id.btn_ChooseMode);
         btn_about = (ImageButton) findViewById(R.id.btn_About);
         btn_save = (ImageButton) findViewById(R.id.btn_Save);
-        //initView();
         btn_selectagain.setOnClickListener(this);
         btn_choosemode.setOnClickListener(this);
         btn_about.setOnClickListener(this);
         btn_save.setOnClickListener(this);
+        Log.i("oncreat:","true");
         getData();
     }
     private void getData() {
@@ -84,43 +86,19 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
         Log.i("selectedImagePath1", filePath + "");*/
         ivImage.setImageBitmap(bm);// 將圖片顯示
     }
-    private Bitmap getimage(String srcPath) {
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        //开始读入图片，此时把options.inJustDecodeBounds 设回true了
-        newOpts.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(srcPath,newOpts);//此时返回bm为空
-
-        newOpts.inJustDecodeBounds = false;
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
-        float hh = 1920f;//这里设置高度为800f
-        float ww = 1080f;//这里设置宽度为480f
-        //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
-        int be = 1;//be=1表示不缩放
-        if (w > h && w > ww) {//如果宽度大的话根据宽度固定大小缩放
-            be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {//如果高度高的话根据宽度固定大小缩放
-            be = (int) (newOpts.outHeight / hh);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        Log.i("onActivityResult:","true");
+        super.onActivityResult(requestCode, resultCode, data);
+        if( requestCode == 1000 && resultCode == 1001)
+        {
+            Bundle bundle = data.getExtras();
+            it = bundle.getInt("checked");
+            byte[] b = bundle.getByteArray("data");
+            bm_1 = BitmapFactory.decodeByteArray(b, 0, b.length);
+            ivImage.setImageBitmap(bm_1);
         }
-        if (be <= 0) be = 1;
-        newOpts.inSampleSize = be;//设置缩放比例
-        //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
-        bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        return compressImage(bitmap);//压缩好比例大小后再进行质量压缩
-    }
-    private Bitmap compressImage(Bitmap image) {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
-        int options = 100;
-        while ( baos.toByteArray().length / 1024>100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
-            baos.reset();//重置baos即清空baos
-            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
-            options -= 10;//每次都减少10
-        }
-        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
-        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
-        return bitmap;
     }
     @Override
     public void onClick(View v) {
@@ -130,10 +108,15 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
                 ChooseMode();
                 break;
             case R.id.btn_SelectPhotoAgain:
-                Toast.makeText(PhotoEdit.this, "選擇濾鏡", Toast.LENGTH_SHORT).show();
-                Log.i("btn_SelectPhotoAgain:","ok");
+                //Toast.makeText(PhotoEdit.this, "選擇濾鏡", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(PhotoEdit.this , ChooseMode.class);
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG,50,bs);
+                bundle.putByteArray("data",bs.toByteArray());
+                intent.putExtras(bundle);
+                //intent.putExtra(PhotoEdit.FILE_PATH,filePath);
+                startActivityForResult(intent, 1000);
                 break;
             case R.id.btn_About:
                 About();

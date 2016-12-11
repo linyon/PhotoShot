@@ -29,9 +29,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         btnSelect = (ImageButton) findViewById(R.id.btn_SelectPhoto);
         btnTake = (ImageButton) findViewById(R.id.btn_TakePhoto);
         btnAbout = (ImageButton) findViewById(R.id.btn_AboutUs);
+
         btnSelect.setOnClickListener(this);
         btnTake.setOnClickListener(this);
         btnAbout.setOnClickListener(this);
@@ -90,33 +92,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
     }
     /*private void about_us(){
         Intent intent = new Intent(MainActivity.this, AboutUs.class);
-        MainActivity.this.startActivity(intent);
-    }*/
-    /*接收拍照結果*/
-    /*private void onCaptureImageResult(Intent data) {
-
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        name = System.currentTimeMillis() + ".jpg";
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-        File destination = new File(Environment.getExternalStorageDirectory(),name); // 輸出檔案名稱
-        path = destination + ""; // 輸出檔案位置
-        FileOutputStream fo;
-        try {
-            destination.createNewFile(); // 建立檔案
-            fo = new FileOutputStream(destination); // 輸出
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.i("select_onCapture:" , path);
-        Log.i("select_on_name:" , name);
-        Intent intent = new Intent(MainActivity.this, PhotoEdit.class);
-        intent.putExtra(PhotoEdit.FILE_PATH,path);
-        intent.putExtra(PhotoEdit.FILE_NAME,name);
         MainActivity.this.startActivity(intent);
     }*/
 
