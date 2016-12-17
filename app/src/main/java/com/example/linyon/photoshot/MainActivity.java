@@ -13,17 +13,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
 public class MainActivity extends Activity implements View.OnClickListener{
 
     private ImageButton btnSelect;
     private ImageButton btnTake;
     private ImageButton btnAbout;
-    private String path,name,id,pic_width,pic_height; // 圖片檔案位置
+    private String path,name,pic_width,pic_height; // 圖片檔案位置
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
-    public static final int REQUEST_PERMISSON_CAMERA = 2;
-    Calendar cal = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +44,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 take_photo();
                 break;
             case R.id.btn_AboutUs:
-                //about_us();
+                about_us();
                 break;
         }//end switch
     }
@@ -57,13 +53,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            //if (requestCode == SELECT_FILE) // 從圖庫開啟
-                //onActivityResult(data);
-            //else if (requestCode == REQUEST_CAMERA) // 拍照
-            //Bitmap bmp = getScaleBitmap(this, getTempImage().getPath());
-            /*if (null != bmp) {
-                postImage.setImageBitmap(bmp);
-            }*/
             onActivityResult(data);
             return;
         }
@@ -90,10 +79,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, REQUEST_CAMERA);
     }
-    /*private void about_us(){
+    private void about_us(){
         Intent intent = new Intent(MainActivity.this, AboutUs.class);
         MainActivity.this.startActivity(intent);
-    }*/
+    }
 
     @SuppressWarnings("deprecation")
     private void onActivityResult(Intent data) {

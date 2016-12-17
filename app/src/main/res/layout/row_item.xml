@@ -15,7 +15,7 @@
                 android:layout_width="74dp"
                 android:layout_height="74dp"
                 android:layout_marginLeft="10dp"
-                android:src="@mipmap/photo_buttom"
+
                 android:id="@+id/imageView"
 
                 android:adjustViewBounds="false" />

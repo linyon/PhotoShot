@@ -6,14 +6,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,19 +20,19 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 
 public class ChooseMode extends Activity {
-    private GridView gridView;
-    //private RecyclerView mRecyclerView;
     private ListView mListView;
     private ListAdapter mAdapter;
-    private int[] imgIds = {R.mipmap.oldremember,
-            R.mipmap.blur, R.mipmap.graylevel,R.mipmap.dipan,
-            R.mipmap.sketch,R.mipmap.blackwhite,R.mipmap.photo_about_72x72};
-    public String filePath;
+    private ImageButton b_closemode;
+    private int[] imgids = {
+            R.mipmap.oldremeber,
+            R.mipmap.blur, R.mipmap.graylevel,R.mipmap.backsheet,
+            R.mipmap.sketchmode,R.mipmap.blackwhite,R.mipmap.sharp,
+            R.mipmap.cancelmode
+    };
     Bitmap bm,bm_1;
     public class ListAdapter extends BaseAdapter {
         private Context mContext;
-        private View mLastView;
-        private int mLastPosition;
+
 
         public ListAdapter(Context context) {
             this.mContext = context;
@@ -68,7 +67,7 @@ public class ChooseMode extends Activity {
                 holder = (Holder) convertView.getTag();
             }
             holder.textView.setText(getResources().getStringArray(R.array.Mode)[position]);
-            holder.imageView.setImageResource(imgIds[position]);
+            holder.imageView.setImageResource(imgids[position]);
             return convertView;
         }
 
@@ -84,11 +83,16 @@ public class ChooseMode extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_choose_mode);
+        b_closemode = (ImageButton)findViewById(R.id.b_closemode);
+        b_closemode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         byte[] b = bundle.getByteArray("data");
-        Log.i("mode:",String.valueOf(b.length));
-        Log.i("mode:","2");
         bm = BitmapFactory.decodeByteArray(b, 0, b.length);
 
         mListView = (ListView)findViewById(R.id.staggered_recycler);
@@ -118,9 +122,10 @@ public class ChooseMode extends Activity {
                         bm_1 = PhotoMode.blackwhite(bm);
                         break;
                     case 6:
-                        bm_1 = bm;
+                        bm_1 = PhotoMode.sharpenImage(bm);
                         break;
                     default: // 取消
+                        bm_1 = bm;
                         break;
                 }
                 Intent intent = new Intent(ChooseMode.this , PhotoEdit.class);

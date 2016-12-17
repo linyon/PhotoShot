@@ -17,12 +17,9 @@ import java.io.ByteArrayOutputStream;
 public class PhotoMode{
     /*懷舊效果*/
     public static Bitmap oldRemeber(Bitmap bmp){
-        // 速度测试
-        //long start = System.currentTimeMillis();
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        //int pixColor,pixR,pixG,pixB,newR,newG,newB;
         int[] pixels = new int[width * height];
         bmp.getPixels(pixels, 0, width, 0, 0, width, height);
         for (int i = 0; i < height; i++){
@@ -42,22 +39,18 @@ public class PhotoMode{
             }
         }
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        //long end = System.currentTimeMillis();
-        //Log.d("may", "used time="+(end - start));
         return bitmap;
     }
     /*模糊效果*/
     public static Bitmap blurImage(Bitmap bmp){
-        int SCALE = 4;
-        Bitmap bitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth()/SCALE,bmp.getHeight()/SCALE,false);//先缩放图片，增加模糊速度
-        int radius = 2;
-        if (radius < 1) {
-            return (null);
-        }
+        Bitmap bitmap = bmp.copy(bmp.getConfig(), true);
+        int radius = 5;
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
+
         int[] pix = new int[w * h];
         bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+
         int wm = w - 1;
         int hm = h - 1;
         int wh = w * h;
@@ -196,7 +189,8 @@ public class PhotoMode{
             stackpointer = radius;
             for (y = 0; y < h; y++) {
                 // Preserve alpha channel: ( 0xff000000 & pix[yi] )
-                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
+                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16)
+                        | (dv[gsum] << 8) | dv[bsum];
 
                 rsum -= routsum;
                 gsum -= goutsum;
@@ -240,6 +234,7 @@ public class PhotoMode{
                 yi += w;
             }
         }
+
         bitmap.setPixels(pix, 0, w, 0, 0, w, h);
         return bitmap;
     }
@@ -305,7 +300,7 @@ public class PhotoMode{
         // 先对图象的像素处理成灰度颜色后再取反
         Bitmap bitmap=Bitmap.createBitmap(width,height, Bitmap.Config.RGB_565);
         bmp.getPixels(pixSrc, 0, width, 0, 0, width, height);
-        Log.i("getPixels", "getPixels");
+        //Log.i("getPixels", "getPixels");
         for (row = 0; row < height; row++) {
             for (col = 0; col < width; col++) {
                 pos = row * width + col;
@@ -565,8 +560,63 @@ public class PhotoMode{
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         return bitmap;
     }
+    /*銳化*/
+    public static Bitmap sharpenImage(Bitmap bmp) {
+        int[] laplacian = new int[] { -1, -1, -1, -1, 9, -1, -1, -1, -1 };
 
+        int width = bmp.getWidth();
+        int height = bmp.getHeight();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
+        int pixR = 0;
+        int pixG = 0;
+        int pixB = 0;
+
+        int pixColor = 0;
+
+        int newR = 0;
+        int newG = 0;
+        int newB = 0;
+
+        int idx = 0;
+        float alpha = 0.3F;
+        int[] pixels = new int[width * height];
+        bmp.getPixels(pixels, 0, width, 0, 0, width, height);
+        for (int i = 1, length = height - 1; i < length; i++)
+        {
+            for (int k = 1, len = width - 1; k < len; k++)
+            {
+                idx = 0;
+                for (int m = -1; m <= 1; m++)
+                {
+                    for (int n = -1; n <= 1; n++)
+                    {
+                        pixColor = pixels[(i + n) * width + k + m];
+                        pixR = Color.red(pixColor);
+                        pixG = Color.green(pixColor);
+                        pixB = Color.blue(pixColor);
+
+                        newR = newR + (int) (pixR * laplacian[idx] * alpha);
+                        newG = newG + (int) (pixG * laplacian[idx] * alpha);
+                        newB = newB + (int) (pixB * laplacian[idx] * alpha);
+                        idx++;
+                    }
+                }
+
+                newR = Math.min(255, Math.max(0, newR));
+                newG = Math.min(255, Math.max(0, newG));
+                newB = Math.min(255, Math.max(0, newB));
+
+                pixels[i * width + k] = Color.argb(255, newR, newG, newB);
+                newR = 0;
+                newG = 0;
+                newB = 0;
+            }
+        }
+
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
 
 
     /*圖片*/

@@ -8,6 +8,7 @@
         <item>底片效果</item>
         <item>草圖效果</item>
         <item>黑白效果</item>
+        <item>銳化效果</item>
         <item>取消效果</item>
     </string-array>
 </resources>

@@ -5,10 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     >
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +13,6 @@
         android:orientation="vertical"
         android:padding="5dp"
         android:background="#D8DAD3">
-
         <ImageView
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
@@ -25,7 +21,6 @@
             android:layout_height="480dp">
         </ImageView>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,16 +33,7 @@
                 android:background="@drawable/mybutton"
                 android:src="@mipmap/choose_mode_72x72"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="28.0dip"
-                />
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/btn_SelectPhotoAgain"
-                android:background="@drawable/mybutton"
-                android:src="@mipmap/ic_launcher"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20.0dip"
+                android:layout_marginLeft="52.0dip"
                 />
             <ImageButton
                 android:layout_width="60dp"
@@ -56,7 +42,7 @@
                 android:background="@drawable/mybutton"
                 android:src="@mipmap/photo_about_72x72"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20.0dip"
+                android:layout_marginLeft="40.0dip"
                 />
             <ImageButton
                 android:layout_width="60dp"
@@ -65,7 +51,7 @@
                 android:background="@drawable/mybutton"
                 android:src="@mipmap/photo_save_72x72"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20.0dip"
+                android:layout_marginLeft="40.0dip"
                 />
     </LinearLayout>
 </LinearLayout>
