@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +33,6 @@ public class ChooseMode extends Activity {
     Bitmap bm,bm_1;
     public class ListAdapter extends BaseAdapter {
         private Context mContext;
-
-
         public ListAdapter(Context context) {
             this.mContext = context;
         }
@@ -62,7 +61,7 @@ public class ChooseMode extends Activity {
                 holder =new Holder();
                 holder.textView = (TextView)convertView.findViewById(R.id.textView);
                 holder.imageView = (ImageView)convertView.findViewById(R.id.imageView);
-                convertView.setTag(holder);
+                convertView.setTag(holder);//用convertView的setTag將Holder設置到Tag，以便系統第二次繪製ListView時從Tag中取出
             } else {
                 holder = (Holder) convertView.getTag();
             }
@@ -93,7 +92,7 @@ public class ChooseMode extends Activity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         byte[] b = bundle.getByteArray("data");
-        bm = BitmapFactory.decodeByteArray(b, 0, b.length);
+        bm = BitmapFactory.decodeByteArray(b, 0, b.length);//將byte[]轉成Bitmap
 
         mListView = (ListView)findViewById(R.id.staggered_recycler);
         mAdapter = new ListAdapter(this);
@@ -132,10 +131,11 @@ public class ChooseMode extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putInt("checked",position);
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                bm_1.compress(Bitmap.CompressFormat.JPEG,50,bs);
+                bm_1.compress(Bitmap.CompressFormat.JPEG,50,bs); //質量壓縮50%
                 bundle.putByteArray("data",bs.toByteArray());
                 intent.putExtras(bundle);
                 setResult(1001, intent);
+                Log.i("setResult:","true");
                 ChooseMode.this.finish();
             }
         });

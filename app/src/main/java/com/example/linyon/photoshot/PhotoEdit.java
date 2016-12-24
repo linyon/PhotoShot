@@ -22,8 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static com.example.linyon.photoshot.PhotoMode.getimage;
-
 public class PhotoEdit extends Activity implements View.OnClickListener {
 
     private ImageView ivImage;
@@ -51,12 +49,12 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
         Log.i("oncreat:","true");
         getData();
     }
-    private void getData() {
+    private void getData(){ //獲取傳遞過來的值
         filePath = getIntent().getStringExtra(FILE_PATH);
         fileName = getIntent().getStringExtra(FILE_NAME);
         fileW = getIntent().getStringExtra(FILE_W);
         fileH = getIntent().getStringExtra(FILE_H);
-        bm = getimage(filePath);
+        bm = PhotoMode.getimage(filePath); //利用圖片路徑抓圖片(Bitmap類別)
         ivImage.setImageBitmap(bm);// 將圖片顯示
     }
     @Override
@@ -69,7 +67,7 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
             Bundle bundle = data.getExtras();
             it = bundle.getInt("checked");
             byte[] b = bundle.getByteArray("data");
-            bm_1 = BitmapFactory.decodeByteArray(b, 0, b.length);
+            bm_1 = BitmapFactory.decodeByteArray(b, 0, b.length);//將byte[]轉成Bitmap
             ivImage.setImageBitmap(bm_1);
         }
     }
@@ -79,11 +77,12 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
             case R.id.btn_ChooseMode:
                 Intent intent = new Intent(PhotoEdit.this , ChooseMode.class);
                 Bundle bundle = new Bundle();
+                //把Bitmap轉成Byte
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                bm.compress(Bitmap.CompressFormat.JPEG,100,bs);
-                bundle.putByteArray("data",bs.toByteArray());
+                bm.compress(Bitmap.CompressFormat.JPEG,100,bs);////質量壓縮，把壓縮後的數據存放到bs中
+                bundle.putByteArray("data",bs.toByteArray()); //bs轉成位元陣列
                 intent.putExtras(bundle);
-                startActivityForResult(intent, 1000);
+                startActivityForResult(intent, 1000); //1000=requestcode
                 break;
             case R.id.btn_About:
                 About();
@@ -132,7 +131,7 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
         try {
             File file = new File(filePath);// 開啟檔案
             FileOutputStream out = new FileOutputStream(file);// 開啟檔案串流
-            bm_save.compress ( Bitmap. CompressFormat.PNG , 90 , out);// 將Bitmap壓縮成指定格式的圖片並寫入檔案串流
+            bm_save.compress(Bitmap.CompressFormat.PNG,100,out);// 將Bitmap壓縮成指定格式的圖片並寫入檔案串流
             out.flush ();// 刷新並關閉檔案串流
             out.close ();
         } catch (FileNotFoundException e) {
@@ -148,7 +147,7 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
         if (!appDir.exists()) {
             appDir.mkdir();
         }
-        String fileName = System.currentTimeMillis() + ".jpg";
+        String fileName = System.currentTimeMillis()+".jpg"; //圖片名稱以當前系統時間命名
         File file = new File(appDir, fileName);
         try {
             FileOutputStream fos = new FileOutputStream(file);
@@ -160,13 +159,13 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {// 其次把文件插入到系统图库
+        try {//其次把文件插入到系統圖庫
             MediaStore.Images.Media.insertImage(this.getContentResolver(),
                     file.getAbsolutePath(), fileName, null);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        // 最后通知图库更新
+        //圖片並不會立刻顯示在圖庫中，所以最后通知圖庫去更新
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File("/sdcard/PhotoShot/"+fileName))));
     }
 }
