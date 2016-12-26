@@ -32,7 +32,7 @@ public class PhotoEdit extends Activity implements View.OnClickListener {
     public static final String FILE_PATH = "file_path";
     public static final String FILE_H = "file_h";
     public static final String FILE_W = "file_w";
-    public String filePath,fileName,fileH,fileW;// 需要编辑图片路径
+    public String filePath,fileName,fileH,fileW;
     Bitmap bm,bm_1;
     public int it=7;
     @Override

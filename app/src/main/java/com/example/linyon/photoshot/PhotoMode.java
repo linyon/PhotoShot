@@ -9,8 +9,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -47,6 +45,7 @@ public class PhotoMode{
         int radius = 5;
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
+
 
         int[] pix = new int[w * h];
         bitmap.getPixels(pix, 0, w, 0, 0, w, h);
@@ -290,29 +289,27 @@ public class PhotoMode{
         bitmap.setPixels(newPixels, 0, width, 0, 0, width, height);
         return bitmap;
     }
-    /**/
+    /*草圖效果*/
     public static Bitmap sketch(Bitmap bmp){
         int pos, row, col, clr;
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         int[] pixSrc = new int[width * height];
         int[] pixNvt = new int[width * height];
-        // 先对图象的像素处理成灰度颜色后再取反
         Bitmap bitmap=Bitmap.createBitmap(width,height, Bitmap.Config.RGB_565);
         bmp.getPixels(pixSrc, 0, width, 0, 0, width, height);
-        //Log.i("getPixels", "getPixels");
         for (row = 0; row < height; row++) {
             for (col = 0; col < width; col++) {
                 pos = row * width + col;
+                //先對圖像的像素處理成灰度顏色後再取反
                 pixSrc[pos] = (Color.red(pixSrc[pos]) + Color.green(pixSrc[pos]) + Color.blue(pixSrc[pos])) / 3;
                 pixNvt[pos] = 255 - pixSrc[pos];
             }
         }
 
-        // 对取反的像素进行高斯模糊, 强度可以设置，暂定为5.0
+        //對像素進行高斯模糊和轉，強度暫定為5.0
         gaussGray(pixNvt, 5.0, 5.0, width, height);
-        Log.i("gaussGray", "gaussGray");
-        // 灰度颜色和模糊后像素进行差值运算
+        //灰階顏色和像素(模糊後)進行差值運算
         for (row = 0; row < height; row++) {
             for (col = 0; col < width; col++) {
                 pos = row * width + col;
@@ -322,12 +319,9 @@ public class PhotoMode{
                 pixSrc[pos] = Color.rgb(clr, clr, clr);
             }
         }
-        Log.i("pixSrc", "pixSrc");
         bitmap.setPixels(pixSrc, 0, width, 0, 0, width, height);
-        Log.i("setPixels", "setPixels");
         return bitmap;
     }
-
     private static int gaussGray(int[] psrc, double horz, double vert, int width, int height) {
         int[] dst, src;
         double[] n_p, n_m, d_p, d_m, bd_p, bd_m;
@@ -359,30 +353,23 @@ public class PhotoMode{
         if (vert > 0.0) {
             vert = Math.abs(vert) + 1.0;
             std_dev = Math.sqrt(-(vert * vert) / (2 * Math.log(1.0 / 255.0)));
-
-            // 初试化常量
+            //初始化常量
             findConstants(n_p, n_m, d_p, d_m, bd_p, bd_m, std_dev);
-
             for (col = 0; col < width; col++) {
                 for (k = 0; k < max_len; k++) {
                     val_m[k] = val_p[k] = 0;
                 }
-
                 for (t = 0; t < height; t++) {
                     src[t] = psrc[t * row_stride + col];
                 }
-
                 sp_p_idx = 0;
                 sp_m_idx = height - 1;
                 vp_idx = 0;
                 vm_idx = height - 1;
-
                 initial_p[0] = src[0];
                 initial_m[0] = src[height - 1];
-
                 for (row = 0; row < height; row++) {
                     terms = (row < 4) ? row : 4;
-
                     for (i = 0; i <= terms; i++) {
                         val_p[vp_idx] += n_p[i] * src[sp_p_idx - i] - d_p[i] * val_p[vp_idx - i];
                         val_m[vm_idx] += n_m[i] * src[sp_m_idx + i] - d_m[i] * val_m[vm_idx + i];
@@ -397,9 +384,7 @@ public class PhotoMode{
                     vp_idx++;
                     vm_idx--;
                 }
-
                 transferGaussPixels(val_p, val_m, dst, 1, height);
-
                 for (t = 0; t < height; t++) {
                     psrc[t * row_stride + col] = dst[t];
                 }
@@ -409,34 +394,26 @@ public class PhotoMode{
         // 水平方向
         if (horz > 0.0) {
             horz = Math.abs(horz) + 1.0;
-
             if (horz != vert) {
                 std_dev = Math.sqrt(-(horz * horz) / (2 * Math.log(1.0 / 255.0)));
-
-                // 初试化常量
+                // 初始化常量
                 findConstants(n_p, n_m, d_p, d_m, bd_p, bd_m, std_dev);
             }
-
             for (row = 0; row < height; row++) {
                 for (k = 0; k < max_len; k++) {
                     val_m[k] = val_p[k] = 0;
                 }
-
                 for (t = 0; t < width; t++) {
                     src[t] = psrc[row * row_stride + t];
                 }
-
                 sp_p_idx = 0;
                 sp_m_idx = width - 1;
                 vp_idx = 0;
                 vm_idx = width - 1;
-
                 initial_p[0] = src[0];
                 initial_m[0] = src[width - 1];
-
                 for (col = 0; col < width; col++) {
                     terms = (col < 4) ? col : 4;
-
                     for (i = 0; i <= terms; i++) {
                         val_p[vp_idx] += n_p[i] * src[sp_p_idx - i] - d_p[i] * val_p[vp_idx - i];
                         val_m[vm_idx] += n_m[i] * src[sp_m_idx + i] - d_m[i] * val_m[vm_idx + i];
@@ -445,15 +422,12 @@ public class PhotoMode{
                         val_p[vp_idx] += (n_p[j] - bd_p[j]) * initial_p[0];
                         val_m[vm_idx] += (n_m[j] - bd_m[j]) * initial_m[0];
                     }
-
                     sp_p_idx++;
                     sp_m_idx--;
                     vp_idx++;
                     vm_idx--;
                 }
-
                 transferGaussPixels(val_p, val_m, dst, 1, width);
-
                 for (t = 0; t < width; t++) {
                     psrc[row * row_stride + t] = dst[t];
                 }
@@ -474,7 +448,6 @@ public class PhotoMode{
         double x6 = -0.6803 / div;
         double x7 = -0.2598 / div;
         int i;
-
         n_p[0] = x4 + x6;
         n_p[1] = (Math.exp(x1) * (x7 * Math.sin(x3) - (x6 + 2 * x4) * Math.cos(x3)) + Math.exp(x0)
                 * (x5 * Math.sin(x2) - (2 * x6 + x4) * Math.cos(x2)));
@@ -485,35 +458,28 @@ public class PhotoMode{
         n_p[3] = (Math.exp(x1 + 2 * x0) * (x7 * Math.sin(x3) - x6 * Math.cos(x3)) + Math.exp(x0 + 2 * x1)
                 * (x5 * Math.sin(x2) - x4 * Math.cos(x2)));
         n_p[4] = 0.0;
-
         d_p[0] = 0.0;
         d_p[1] = -2 * Math.exp(x1) * Math.cos(x3) - 2 * Math.exp(x0) * Math.cos(x2);
         d_p[2] = 4 * Math.cos(x3) * Math.cos(x2) * Math.exp(x0 + x1) + Math.exp(2 * x1) + Math.exp(2 * x0);
         d_p[3] = -2 * Math.cos(x2) * Math.exp(x0 + 2 * x1) - 2 * Math.cos(x3) * Math.exp(x1 + 2 * x0);
         d_p[4] = Math.exp(2 * x0 + 2 * x1);
-
         for (i = 0; i <= 4; i++) {
             d_m[i] = d_p[i];
         }
-
         n_m[0] = 0.0;
         for (i = 1; i <= 4; i++) {
             n_m[i] = n_p[i] - d_p[i] * n_p[0];
         }
-
         double sum_n_p, sum_n_m, sum_d;
         double a, b;
-
         sum_n_p = 0.0;
         sum_n_m = 0.0;
         sum_d = 0.0;
-
         for (i = 0; i <= 4; i++) {
             sum_n_p += n_p[i];
             sum_n_m += n_m[i];
             sum_d += d_p[i];
         }
-
         a = sum_n_p / (1.0 + sum_d);
         b = sum_n_m / (1.0 + sum_d);
 
@@ -537,7 +503,7 @@ public class PhotoMode{
             dest[k++] = (int) sum;
         }
     }
-    /**/
+    /*黑白*/
     public static Bitmap blackwhite(Bitmap bmp){
         int width = bmp.getWidth();
         int height = bmp.getHeight();
@@ -622,44 +588,42 @@ public class PhotoMode{
     /*圖片*/
     public static Bitmap getimage(String srcPath) {
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        //开始读入图片，此时把options.inJustDecodeBounds 设回true了
+        //開始讀入圖片，this time把options.inJustDecodeBounds設回真了
         newOpts.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(srcPath,newOpts);//此时返回bm为空
+        Bitmap bitmap = BitmapFactory.decodeFile(srcPath,newOpts);//此时bitmap為null
         newOpts.inJustDecodeBounds = false;
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
-        float hh = 1920f;//这里设置高度为800f
-        float ww = 1080f;//这里设置宽度为480f
-        //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
-        int be = 1;//be=1表示不缩放
-        if (w > h && w > ww) {//如果宽度大的话根据宽度固定大小缩放
+        float hh = 1920f;
+        float ww = 1080f;
+        //缩放比(固定比例縮放)
+        int be = 1;//表示不缩放
+        if (w > h && w > ww) {//如果寬度大的話根據寬度固定大小縮放
             be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {//如果高度高的话根据宽度固定大小缩放
+        } else if (w < h && h > hh) {//如果高度高的話根據高度固定大小縮放
             be = (int) (newOpts.outHeight / hh);
         }
         if (be <= 0) be = 1;
-        newOpts.inSampleSize = be;//设置缩放比例
-        //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
+        newOpts.inSampleSize = be;//
+        //重新讀入圖片
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        return compressImage(bitmap);//压缩好比例大小后再进行质量压缩
+        return compressImage(bitmap);//壓縮好比例大小後再進行質量壓縮
     }
     private static Bitmap compressImage(Bitmap image) {
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//質量壓縮方法(100=不壓縮)
         int options = 100;
-        while ( baos.toByteArray().length / 1024>100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
-            baos.reset();//重置baos即清空baos
-            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+        while ( baos.toByteArray().length / 1024>100) {  //判斷是否要繼續壓縮
+            baos.reset();//清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);
             options -= 10;//每次都减少10
         }
-        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
-        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把壓縮後的baos存放到isBm
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);
         return bitmap;
     }
-    /*圓角圖*/
+    /*圓角*/
     public static Bitmap toRoundCorner(Bitmap bitmap, float pixels) {
-        System.out.println("图片是否变成圆角模式了+++++++++++++");
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
@@ -677,7 +641,6 @@ public class PhotoMode{
         canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
-        System.out.println("pixels+++++++" + pixels);
 
         return output;
     }

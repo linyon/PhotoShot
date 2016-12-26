@@ -16,7 +16,41 @@
         android:padding="8dp"
         />
 
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#829397"
+        android:orientation="vertical"
+        android:padding="10dp"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="四子三丙"
+            android:textSize="40sp"
+            android:gravity="center"
+            android:background="#829397"
+            />
+        <TextView
+            android:id="@+id/item_number"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="學號"
+            android:textSize="40sp"
+            android:gravity="center"
+            android:background="#829397"
+           />
+        <TextView
+            android:id="@+id/item_work"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="工作分配"
+            android:textSize="40sp"
+            android:gravity="center"
+            android:background="#829397"
+            />
+    </LinearLayout>
+    <!--
     <TextView
         android:id="@+id/item_title"
         android:layout_width="match_parent"
@@ -26,6 +60,6 @@
         android:background="#829397"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        />
+        />-->
 
 </LinearLayout>

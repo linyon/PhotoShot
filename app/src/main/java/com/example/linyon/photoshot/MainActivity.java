@@ -101,11 +101,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         MainActivity.this.startActivity(intent);
     }
 
-    @SuppressWarnings("deprecation")
-    private void onActivityResult(Intent data) {
-
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

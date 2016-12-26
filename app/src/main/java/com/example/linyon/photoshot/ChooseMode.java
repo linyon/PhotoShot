@@ -100,7 +100,6 @@ public class ChooseMode extends Activity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //Toast.makeText(ChooseMode.this, "選擇"+String.valueOf(position), Toast.LENGTH_SHORT).show();
                 switch (position) {
                     case 0: // 懷舊
                         bm_1 = PhotoMode.oldRemeber(bm);
